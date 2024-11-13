@@ -1,0 +1,716 @@
+{
+	"info": {
+		"_postman_id": "3282ac9e-a002-4149-89ab-43048b2f10e1",
+		"name": "Order.Vega",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39633872"
+	},
+	"item": [
+		{
+			"name": "crud",
+			"item": [
+				{
+					"name": "add_chain",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rootKey\":\"super_secret_key\",\n    \"chain\":{\n        \"chainName\": \"Tron\",\n\t\"description\": \"Tron picerija\"\n    }\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/chain",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"chain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_chain",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/chain?name=2x2",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"chain"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "2x2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_chains",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/chains?from_ind=0&count=3&sort=1",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"chains"
+							],
+							"query": [
+								{
+									"key": "from_ind",
+									"value": "0"
+								},
+								{
+									"key": "count",
+									"value": "3"
+								},
+								{
+									"key": "sort",
+									"value": "1",
+									"description": "byName=1, byRating=2, byPrice=3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_restaurant",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"chain\": \"2x2\",\n    \"rest\": {\n        \"name\": \"vega restaurant\",\n        \"address\": \"milojka Lesjanina\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/restaurant",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"restaurant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_restaurants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/restaurants?chain=2x2",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"restaurants"
+							],
+							"query": [
+								{
+									"key": "chain",
+									"value": "2x2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_restaurant",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"chain\":\"2x2\",\n    \"restaurant\":\"sokolska\",\n    \"address\":\"sokolska 102\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/restaurant",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"restaurant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_restaurant",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"chain\":\"2x2\",\n    \"restaurant\":\"sokolska\",\n    \"address\":\"sokolska 102\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/restaurant",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"restaurant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_menu_item",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"chain\":\"2x2\",\n    \"item\": {\n        \"name\":\"some new item\",\n        \"description\": \"description for some new item\",\n        \"price\": 1023,\n        \"imgUrl\":\"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRexBia36ixX_U4FoPlg0iqv2hZIvfRyeH8LQ&s\",\n        \"currency\":\"RSD\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/menu",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"menu"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_menu",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/menu?chain=2x2&from_ind=0&count=3&sort=1",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"menu"
+							],
+							"query": [
+								{
+									"key": "chain",
+									"value": "2x2"
+								},
+								{
+									"key": "from_ind",
+									"value": "0"
+								},
+								{
+									"key": "count",
+									"value": "3"
+								},
+								{
+									"key": "sort",
+									"value": "1",
+									"description": "byName=1, byRating=2, byPrice=3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_menu_item",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/item?chain=2x2&item=Bolognese",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"item"
+							],
+							"query": [
+								{
+									"key": "chain",
+									"value": "2x2"
+								},
+								{
+									"key": "item",
+									"value": "Bolognese"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_menu_item",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"chain\": \"2x2\",\n    \"item\": {\n        \"name\": \"some new item\",\n        \"description\": \"description for some new item\",\n        \"price\": 1023,\n        \"imgUrl\": \"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRexBia36ixX_U4FoPlg0iqv2hZIvfRyeH8LQ&s\",\n        \"currency\": \"RSD\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/menu",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"menu"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_menu_item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/menu?chain=2x2&item=\"best item\"",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"menu"
+							],
+							"query": [
+								{
+									"key": "chain",
+									"value": "2x2"
+								},
+								{
+									"key": "item",
+									"value": "\"best item\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkout_order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"chain\":\"2x2\",\n    \"items\": [\n        {\"name\":\"Carbonara\", \"price\":340, \"currency\":\"RSD\"},\n        {\"name\":\"Carbonara\", \"price\":340, \"currency\":\"RSD\"},\n        {\"name\":\"best item\", \"price\":400, \"currency\":\"RSD\"}\n    ],\n    \"address\":\"some address\",\n    \"cadrData\": \"123-33-22 5\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/checkout",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "waitin_orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/orders/waiting",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"orders",
+								"waiting"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_courier",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user_1@vega.com\",\n    \"restaurantName\": \"iza parka\",\n    \"chainName\": \"2x2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/courier",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"courier"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_couriers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/couriers?restaurant=\"iza parka\"",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"couriers"
+							],
+							"query": [
+								{
+									"key": "restaurant",
+									"value": "\"iza parka\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_courier",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/courier?restaurant=\"iza parka\"&courier=\"user_2@vega.com\"",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"courier"
+							],
+							"query": [
+								{
+									"key": "restaurant",
+									"value": "\"iza parka\""
+								},
+								{
+									"key": "courier",
+									"value": "\"user_2@vega.com\""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "sign_up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "st-auth-mode",
+								"value": "cookie",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"formFields\": [\n        {\n            \"id\": \"email\",\n            \"value\": \"token_user@vega.com\"\n        },\n        {\n            \"id\": \"password\",\n            \"value\": \"verystrongpwd1\"\n        },\n        {\n            \"id\": \"address\",\n            \"value\": \"Milojka Lesjanina\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/auth/signup",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign_in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/auth/signin",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh_token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/auth/session/refresh",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"auth",
+								"session",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign_out",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/auth/signout",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"auth",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rootKey\":\"everyone_is_root\",\n    \"role\":{\n        \"userEmail\":\"token_user@vega.com\",\n        \"chainName\":\"2x2\",\n        \"role\":\"admin\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{domain}}:{{port}}/role",
+							"protocol": "http",
+							"host": [
+								"{{domain}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"role"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "delete_role",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"rootKey\":\"everyone_is_root\",\n    \"role\":{\n        \"userEmail\":\"user_2@vega.com\",\n        \"chainName\":\"2x2\",\n        \"role\":\"admin\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{domain}}:{{port}}/role",
+					"protocol": "http",
+					"host": [
+						"{{domain}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"role"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_roles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{domain}}:{{port}}/roles?user_email=user_1@vega.com",
+					"protocol": "http",
+					"host": [
+						"{{domain}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"roles"
+					],
+					"query": [
+						{
+							"key": "user_email",
+							"value": "user_1@vega.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{domain}}:{{port}}/user?tokens_id=supertokens_generated_token",
+					"protocol": "http",
+					"host": [
+						"{{domain}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user"
+					],
+					"query": [
+						{
+							"key": "tokens_id",
+							"value": "supertokens_generated_token"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "port",
+			"value": "8080"
+		},
+		{
+			"key": "domain",
+			"value": "localhost"
+		}
+	]
+}

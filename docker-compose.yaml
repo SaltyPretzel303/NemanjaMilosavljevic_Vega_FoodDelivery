@@ -1,0 +1,64 @@
+
+networks: 
+  vega-net: 
+    name: vega-net
+    driver: bridge 
+    attachable: true 
+
+services: 
+
+  tokens-core:
+    container_name: 'tokens-core.vega'
+    image: registry.supertokens.io/supertokens/supertokens-postgresql:7.0
+    depends_on:
+      tokens-db:
+        condition: service_healthy
+    ports:
+      - 3567:3567
+    environment:
+      POSTGRESQL_CONNECTION_URI: "postgresql://supertokens_user:somePassword@tokens-db.vega:5432/supertokens"
+    networks:
+      - vega-net
+    # restart: unless-stopped
+    healthcheck:
+      test: >
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/3567 && echo -e "GET /hello HTTP/1.1\r\nhost: 127.0.0.1:3567\r\nConnection: close\r\n\r\n" >&3 && cat <&3 | grep "Hello"'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    stop_signal: SIGINT
+
+  tokens-db:
+    container_name: 'tokens-db.vega'
+    image: 'postgres:latest'
+    environment:
+      POSTGRES_USER: supertokens_user 
+      POSTGRES_PASSWORD: somePassword 
+      POSTGRES_DB: supertokens
+    ports:
+      - 5432:5432
+    networks:
+      - vega-net
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'supertokens_user', '-d', 'supertokens']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  backend: 
+    container_name: 'backend.vega'
+    build: 
+      context: ./
+      dockerfile: ./backend.Dockerfile
+    image: 'vega/order_backend'
+    environment: 
+      APP_STAGE: prod
+    ports: 
+      - 8080:80
+    networks: 
+      - vega-net
+    volumes: 
+      - ./backend/local.db:/app/local.db
+
+
+

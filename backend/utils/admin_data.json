@@ -1,0 +1,8 @@
+{
+	"rootKey": "somesupersecretkeyu",
+	"role": {
+		"userEmail": "pravi@user.com",
+		"chainName": "2x2",
+		"role": "admin"
+	}
+}
