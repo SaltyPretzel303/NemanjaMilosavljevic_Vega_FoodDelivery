@@ -1,4 +1,4 @@
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timedelta
 import math
 from sqlite3 import IntegrityError
 from typing import List
@@ -123,9 +123,12 @@ def distance(rest: Restaurant, long_b:float, lat_b:float):
 
 async def get_free_courier(s: AsyncSession, chain: str, long: float, lat: float) -> Courier: 
 	
+	now = datetime.now(UTC)
+	max_period = now - timedelta(minutes=15)
+
 	doing_delivery_stm = ~exists(select(Order)\
 					.where(and_(Order.courier_id == Courier.id, 
-				 			Order.delivered_at == None)))
+				 			Order.created_at > max_period)))
 
 	stm = select(Courier)\
 		.join(Restaurant)\
@@ -447,44 +450,12 @@ async def remove_courier(s: AsyncSession, courier: str) -> bool:
 	await s.commit()
 	return True
 
-# TODO should be removed 
-async def reassign_courier(s: AsyncSession, 
-						courier: Courier, 
-						restName: str) -> Courier:
-	print("Will reassign courier.")
-	non_delivered_stm = select(Order)\
-					.where(and_(Order.courier_id == courier.id,
-								Order.delivered_at == None))
-	
-	non_delivered_rows = await s.execute(non_delivered_rows)
-	non_delivered_ord = non_delivered_rows.scalar()
-	if non_delivered_ord is not None: 
-		print("Courier occupied, cant reassign it.")
-		return None
-	
-	rest_stm = select(Restaurant.id).where(Restaurant.name == restName).limit(1)
-
-	print("Reassigning.")
-
-	await s.execute(delete(Courier).where(Courier.id == courier.id))
-
-	insert_stm = insert(Courier)\
-			.values(
-				user_id = courier.user_id,
-				lat = courier.lat, 
-				long = courier.long, 
-				restaurant_id = rest_stm.scalar_subquery()
-			).returning(Courier)
-	
-	insert_row = await s.execute(insert_stm)
-	await s.commit()
-
-	return insert_row.scalar()
-
 async def get_waitings_orders_by_token(s: AsyncSession, token: str) -> List[Order]: 
 	
+	now = datetime.now(UTC)
+	max_period = now - timedelta(minutes=15)
 	stm = select(Order).join(User)\
-		.where(and_(User.tokens_id == token, Order.delivered_at == None))
+		.where(and_(User.tokens_id == token, Order.created_at > max_period))
 	
 	rows = await s.execute(stm)
 

@@ -149,7 +149,8 @@ export default function AdminCourierPopup(
 					'>
 					{
 						rests.map((r, ind) =>
-							<RestPreview key={ind}
+							<RestPreview
+								key={r.name}
 								name={r.name}
 								address={r.address}
 								selected={r.name == selRest?.name}
@@ -164,7 +165,8 @@ export default function AdminCourierPopup(
 							border-y rounded-b-xl rounded-t-xl'>
 					{
 						couriers.map((c) =>
-							<div className='flex flex-row
+							<div key={c.email} 
+								className='flex flex-row
 								w-full h-[30px]'>
 
 								<p className='flex w-full 

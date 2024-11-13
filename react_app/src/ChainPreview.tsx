@@ -13,15 +13,16 @@ export default function ChainPreview(
 
 ) {
 	return (
-		<div onClick={() => onClick(chain)}
-			className={`flex flex-col
+		<div className={`flex flex-col
 				w-full h-[100px] min-h-[100px]
 				mb-2 p-2
+				box-border
 				items-start justify-center
 				border-2
 				${selected ? 'border-orange-400' : ""}
 				rounded-xl
-				hover:bg-gray-400 hover:bg-opacity-20`}>
+				hover:bg-gray-400 hover:bg-opacity-20`}
+			onClick={() => onClick(chain)}>
 
 			<p className='text-xl text-orange-400'>{chain.chainName}</p>
 			<div className='flex w-1/3 border-b mb-4'></div>

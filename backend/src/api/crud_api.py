@@ -301,7 +301,6 @@ async def get_waiting_orders(s = Depends(verify_session()),
 
 	return [mapper.as_checkout_response(resp) for resp in data]
 
-
 @app.post("/courier")
 async def add_courier(data: AddCourierRequest,
 				session = Depends(verify_session()),
@@ -326,10 +325,13 @@ async def add_courier(data: AddCourierRequest,
 
 	if courier is None:
 		res = await crud.add_courier(db_s, data.email, data.restaurantName)
+
 		if res is not None: 
 			return AddCourierResponse.success()
 		else: 
 			return  AddCourierResponse.failed()
+	else:
+		return AddCourierResponse.occupied()
 
 @app.get("/couriers")
 async def get_couriers(restaurant: str, db = Depends(gen_session)): 

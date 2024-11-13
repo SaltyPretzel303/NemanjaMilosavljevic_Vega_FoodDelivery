@@ -40,7 +40,7 @@ export default function Cart(
 							key={ind}>
 
 							<p className='flex w-3/4'>
-								{ord.orderId}: {ord.restaurant}
+								{ord.orderId}: {ord.restaurant} |{ord.deliveryTime}|
 							</p>
 							<p>Waiting ... </p>
 						</div>

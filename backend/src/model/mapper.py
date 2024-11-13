@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import src.model.models as data
 import src.database.models as db
 
@@ -27,9 +27,9 @@ def as_courier(email: str, restaurant: str):
 
 def as_checkout_response(order: db.Order): 
 	return data.CheckoutResponse.success(order.id, 
-									"some courier", 
+									"", 
 									order.restaurant.name, 
-									None)
+									order.created_at + timedelta(minutes=15))
 
 def as_food_review(comment: str, rating: float, email:str): 
 	return data.FoodReview(comment=comment, rating=rating, userEmail=email)

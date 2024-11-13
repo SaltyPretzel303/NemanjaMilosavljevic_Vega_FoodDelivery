@@ -42,6 +42,7 @@ SuperTokens.init({
 			onHandleEvent: async (context: OnHandleEventContext) => {
 				if (context.action == "SUCCESS" && context.createdNewSession) {
 					console.log("Successfull login/up")
+					
 				}
 			},
 
@@ -179,6 +180,7 @@ export default function App() {
 
 	async function onChainClick(chain: Chain) {
 		setSelChain(chain)
+		setHasMoreItems(true)
 		const newItems = await loadMenuItems(chain.chainName,
 			0, CHAINS_LOAD_COUNT, menuSort)
 
@@ -410,8 +412,7 @@ export default function App() {
 		<div className="flex flex-col
 				bg-slate-800
 				text-white
-				h-screen w-screen 
-				max-h-screen
+				w-screen h-screen
 				items-center justify-start">
 
 			{/* HEADER BAR */}
@@ -435,8 +436,8 @@ export default function App() {
 			</div>
 
 			<div className='flex flex-row 
-					py-4
 					size-full
+					py-4
 					items-center justify-evenly
 					border-2 border-black'>
 
@@ -523,7 +524,7 @@ export default function App() {
 					rounded-xl px-2
 					items-start'>
 
-					<div className='flex w-full h-[400px] mb-2'>
+					<div className='flex w-full h-[300px] mb-2'>
 						<Cart newOrders={sumOrders()}
 							waitingOrders={oldOrders}
 							onCheckout={checkOutClick} />
@@ -548,7 +549,7 @@ export default function App() {
 
 					</Column>
 				</div>
-			</div >
+			</div>
 
 			<LoginPopup
 				loginVisible={loginVisible}

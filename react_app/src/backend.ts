@@ -382,6 +382,10 @@ export async function addCourier(chainName: string,
 				body: JSON.stringify(reqData)
 			})
 
+		if(!res.ok){
+			throw Error("Add courier status: " + res.ok)
+		}
+
 		return await res.json() as AddCourierResponse
 	} catch (e) {
 		console.log("Filed to add courier: " + e)
