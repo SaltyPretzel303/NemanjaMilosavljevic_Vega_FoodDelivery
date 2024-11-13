@@ -156,3 +156,16 @@ class AddRestaurantRequest:
 class MenuItemRequest: 
 	chain: str
 	item: MenuItem
+
+@dataclass
+class FoodReview:
+	comment: str
+	rating: float
+	userEmail: str
+
+@dataclass 
+class PostReviewRequest: 
+	chain: str
+	itemName: str
+	rating: float 
+	comment: str 

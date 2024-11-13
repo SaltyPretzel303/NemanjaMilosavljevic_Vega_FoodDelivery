@@ -142,7 +142,20 @@ export interface AddRestaurantRequest {
 	rest: Restaurant
 }
 
-export interface MenuItemRequest { 
-	chain: string 
+export interface MenuItemRequest {
+	chain: string
 	item: MenuItem
+}
+
+export interface FoodReview {
+	comment: string
+	rating: number
+	userEmail: string
+}	
+
+export interface PostReviewRequest { 
+	chain: string, 
+	itemName: string, 
+	rating: number, 
+	comment: string 
 }

@@ -8,7 +8,9 @@ import {
 	UpdateRestRequest,
 	Courier,
 	AddRestaurantRequest,
-	MenuItemRequest
+	MenuItemRequest,
+	FoodReview,
+	PostReviewRequest
 } from "./datas";
 
 function chainsUrl(f: number, cnt: number, sort: Sort): string {
@@ -83,6 +85,24 @@ function getUpdateRestUrl(): string {
 function getRemoveResturl(): string {
 	return `http://localhost:8080/restaurant`
 }
+
+function getRatingUrl(chain: string, item: string): string {
+	return `http://localhost:8080/rating?chain=${chain}&item=${item}`
+}
+
+function getReviewsUrl(chain: string, item: string, f: number, c: number): string {
+	return `http://localhost:8080/reviews?chain=${chain}&itemName=${item}&from_ind=${f}&count=${c}`
+}
+
+function getCanCommentUrl(chain: string, item: string): string {
+	return `http://localhost:8080/canreview?chain=${chain}&item=${item}`
+}
+
+function getPostReviewUrl(): string {
+	return `http://localhost:8080/review`
+}
+
+/// APIS
 
 export async function loadChains(f: number, cnt: number, sort: Sort): Promise<Chain[]> {
 
@@ -512,6 +532,94 @@ export async function removeRest(chain: string, rest: string): Promise<boolean> 
 	} catch (e) {
 		console.log("Filed to delete restaurant: " + e)
 		return false
+	}
+
+}
+
+export async function getRating(chain: string, item: string): Promise<number> {
+	try {
+
+		let res = await fetch(getRatingUrl(chain, item))
+		if (!res.ok) {
+			throw Error("Fetch ratings status: " + res.status)
+		}
+
+		return +(await res.text()) // this should return it as value
+	} catch (e) {
+		console.log("Failed to fetch ratings: " + e)
+		return -1
+	}
+}
+
+export async function getReviews(chain: string,
+	item: string,
+	fromInd: number,
+	count: number): Promise<FoodReview[]> {
+
+	try {
+
+		let res = await fetch(getReviewsUrl(chain, item, fromInd, count))
+
+		if (!res.ok) {
+			console.log("Fetch ratings status: " + res.status)
+			throw Error("Fetch ratings status: " + res.status)
+		}
+
+		return (await res.json()) as FoodReview[]
+	} catch (e) {
+		console.log("Failed to fetch ratings: " + e)
+		return []
+	}
+}
+
+export async function getCanReview(chain: string, itemName: string): Promise<boolean> {
+
+	try {
+
+		let res = await fetch(getCanCommentUrl(chain, itemName))
+		if (!res.ok) {
+			throw Error("Checking if have ordered before, status: " + res.status)
+		}
+
+		return true
+	} catch (e) {
+		console.log("Failed to check if have ordere before: " + e)
+		return false
+	}
+}
+
+export async function postReview(chain: string, item: string, rating: number,
+	comment: string): Promise<FoodReview | undefined> {
+
+	let url = getPostReviewUrl()
+
+	try {
+
+		let reqData = {
+			chain: chain,
+			itemName: item,
+			rating: rating,
+			comment: comment
+		} as PostReviewRequest
+
+		let res = await fetch(url,
+			{
+				method: "POST",
+				headers: {
+					'Content-type': 'application/json',
+					'Accept': 'application/json'
+				},
+				body: JSON.stringify(reqData)
+			})
+
+		if (!res.ok) {
+			throw Error("Post review status: " + res.status)
+		}
+
+		return await res.json() as FoodReview
+	} catch (e) {
+		console.log("Filed to post review: " + e)
+		return undefined
 	}
 
 }

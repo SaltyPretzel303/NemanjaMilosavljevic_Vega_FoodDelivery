@@ -30,6 +30,7 @@ async def get_session_factory() -> async_sessionmaker[AsyncSession]:
 
 	return sessionFactory
 
+# Engine will be created on FastApi startup (or whatever lib is used).
 async def create_engine(): 
 	global engine
 	global sessionFactory

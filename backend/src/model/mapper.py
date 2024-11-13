@@ -30,3 +30,6 @@ def as_checkout_response(order: db.Order):
 									"some courier", 
 									order.restaurant.name, 
 									None)
+
+def as_food_review(comment: str, rating: float, email:str): 
+	return data.FoodReview(comment=comment, rating=rating, userEmail=email)

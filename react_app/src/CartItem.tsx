@@ -38,7 +38,7 @@ export default function CartItem(
 						border-y-2 border-r-2 
 						rounded-r-full
 						justify-center
-						hover:bg-red-600
+						hover:bg-red-600 hover:bg-opacity-50
 						text-xl text-red-700
 						px-4'
 					onClick={onRemove}>

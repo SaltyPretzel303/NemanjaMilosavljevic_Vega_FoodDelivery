@@ -35,7 +35,7 @@ export default function Cart(
 							w-[95%]
 							items-center justify-center
 							px-2 m-2 
-							hover:bg-gray-300
+							hover:bg-gray-200 hover:bg-opacity-40
 							border border-green-500 rounded-xl'
 							key={ind}>
 
@@ -53,7 +53,7 @@ export default function Cart(
 							w-[95%]
 							items-center justify-center
 							p-2 m-2 
-							hover:bg-gray-300
+							hover:bg-gray-200 hover:bg-opacity-40
 							border border-yellow-700 rounded-xl'
 							key={index}>
 
@@ -63,7 +63,7 @@ export default function Cart(
 							<button className='flex 
 											px-2 
 											justify-center mx-4 
-											border border-black rounded-xl
+											border rounded-xl
 											hover:bg-blue-300
 											min-w-fit'
 								onClick={() => onCheckout(order)}>

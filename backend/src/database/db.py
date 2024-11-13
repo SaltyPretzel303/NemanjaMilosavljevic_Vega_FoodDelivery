@@ -3,14 +3,15 @@ import math
 from sqlite3 import IntegrityError
 from typing import List
 
-from sqlalchemy import and_, exists, select, delete, update
+from sqlalchemy import and_, exists, func, select, delete, update
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.models import OrderItem as DbOrderItem
+from src.database.models import FoodReview, OrderItem
 from src.model.models import CheckoutItem, Sort
-from src.database.models import Chain, Courier, Order, Restaurant, MenuItem, Role, User
+from src.database.models import Chain, Courier, Order, Restaurant, MenuItem
+from src.database.models import Role, User
 
 async def add_chain(s: AsyncSession, name: str, description:str) -> tuple[Chain, str]:
 	res = await s.execute(
@@ -160,7 +161,7 @@ async def add_order(s: AsyncSession,
 		menu_item_id_stm = select(MenuItem.id)\
 			.where(and_(MenuItem.chain_id == chain_id, MenuItem.name == item.name))
 		
-		insert_stm = insert(DbOrderItem).values(
+		insert_stm = insert(OrderItem).values(
 			order_id = order.id, 
 			item_id = menu_item_id_stm.scalar_subquery(),
 			price = item.price,
@@ -213,10 +214,15 @@ async def get_menu_items(s: AsyncSession,
 				from_ind: int=0, 
 				count:int=None) -> List[MenuItem]:
 
+	avg_subquery = select(FoodReview.item_id, func.avg(FoodReview.rating).label("avg_rating"))\
+				.group_by(FoodReview.item_id)\
+				.subquery()
+
+
 	sort_args = {
 		Sort.byName: MenuItem.name,
 		Sort.byPrice: MenuItem.price,
-		Sort.byRating: MenuItem.price
+		Sort.byRating: avg_subquery.c.avg_rating.desc()
 	}
 
 	if sort not in sort_args: 
@@ -224,10 +230,11 @@ async def get_menu_items(s: AsyncSession,
 		return []
 
 	items = await s.execute(select(MenuItem)
-				   .where(MenuItem.chain_id == chain_id)
-				   .order_by(sort_args[sort])
-				   .offset(from_ind)
-				   .limit(count))
+					.outerjoin(avg_subquery, avg_subquery.c.item_id == MenuItem.id)
+					.where(MenuItem.chain_id == chain_id)
+					.order_by(sort_args[sort])
+					.offset(from_ind)
+					.limit(count))
 	
 	return items.scalars()
 
@@ -482,3 +489,60 @@ async def get_waitings_orders_by_token(s: AsyncSession, token: str) -> List[Orde
 	rows = await s.execute(stm)
 
 	return rows.scalars().all()
+
+async def get_rating(s: AsyncSession, chain: str, item: str) -> float: 
+
+	stm = select(func.avg(FoodReview.rating))\
+			.join(MenuItem).join(Chain)\
+			.where(and_(Chain.name == chain, MenuItem.name == item))
+
+	row = await s.execute(stm)
+
+	return row.scalar()
+
+async def have_ordered(s: AsyncSession, chain: str, item: str, user_token: str) -> bool: 
+
+	stm = select(OrderItem.id).join(Order).join(User)\
+			.where(User.tokens_id == user_token)\
+			.join(MenuItem).where(MenuItem.name == item)\
+			.join(Chain).where(Chain.name == "2x2")
+	
+	row = await s.execute(stm)
+
+	return row.first() is not None
+
+async def get_review(s: AsyncSession, chain: str, item: str, user_token:str) -> FoodReview:
+	stm = select(FoodReview).join(User).where(User.tokens_id == user_token)\
+				.join(MenuItem).join(Chain)\
+				.where(and_(Chain.name == chain, MenuItem.name == item))
+	
+	rows = await s.execute(stm)
+	return rows.scalar()
+
+async def get_reviews(s: AsyncSession, chain:str, item:str, 
+					  from_ind: int, count:int) -> List[FoodReview]: 
+	
+	stm = select(FoodReview).join(MenuItem).join(Chain)\
+			.where(and_(Chain.name == chain, MenuItem.name == item))\
+			.offset(from_ind).limit(count)
+
+	rows = await s.execute(stm)
+	return rows.scalars().all()
+
+async def add_review(s: AsyncSession, chain: str, itemName: str, rating: float,
+					 comment:str, user_token:str) -> FoodReview: 
+
+	item_id_stm = select(MenuItem.id).join(Chain)\
+		.where(and_(Chain.name == chain, MenuItem.name == itemName))
+	user_id_stm = select(User.id).where(User.tokens_id == user_token)
+
+	row = await s.execute(insert(FoodReview).values(
+		item_id = item_id_stm.scalar_subquery(),
+		user_id = user_id_stm.scalar_subquery(),
+		rating = rating, 
+		comment = comment
+	).returning(FoodReview))
+
+	await s.commit()
+
+	return row.scalar()

@@ -20,7 +20,7 @@ export function Column(
 		loadMore: (() => Promise<void>) | undefined,
 		hasMore: boolean,
 		sorts: SortCriteria[] | undefined,
-		onSort: (value: Sort) => void
+		onSort: (value: Sort) => void,
 	}
 
 ) {
@@ -29,18 +29,20 @@ export function Column(
 
 	return (
 		<div className='flex flex-col 
-				size-full px-2
+				size-full p-2
 				items-center justify-start
 				border-2 border-orange-400 rounded-xl'>
 
-			<div className='flex w-2/3 h-[30px]
-				text-2xl justify-center'>
-				{title}</div>
+			<p className='flex w-2/3 h-[30px]
+					text-2xl justify-center'>
+				{title}</p>
 
 			{sorts &&
+				// h-[30px] 
 				<div className='flex flex-row 
-				h-[30px] w-full mt-4
-				overflow-x-scroll'>
+						h-1/10 min-h-[30px]
+						w-full mt-4
+						overflow-x-scroll'>
 					<p className='flex mx-2'>Sort: </p>
 					{
 						sorts.map((s, ind) =>
@@ -64,7 +66,8 @@ export function Column(
 				m-2 p-2'>
 
 				<div className="flex flex-col 
-					w-full h-full px-2
+					size-full
+					p-2
 					items-center
 					border-y-2 border-black rounded-xl 
 					overflow-scroll">
@@ -73,16 +76,17 @@ export function Column(
 
 				</div>
 
-				{loadMore && <button className='flex justify-center 
-					h-[30px]
-					mt-2 px-2
-					border-2 border-orange-400 rounded-xl
-					hover:bg-orange-400'
-					disabled={!hasMore}
-					onClick={loadMore}>
-
-					Load More
-				</button>}
+				{loadMore &&
+					<button className='flex justify-center 
+							h-[30px]
+							mt-2 px-2
+							border-2 border-orange-400 rounded-xl
+							hover:bg-orange-400'
+						disabled={!hasMore}
+						onClick={loadMore}>
+						Load More
+					</button>
+				}
 			</div>
 
 		</div>

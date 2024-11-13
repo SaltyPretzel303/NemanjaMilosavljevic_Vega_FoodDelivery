@@ -1,10 +1,10 @@
 from typing import List
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, PrimaryKeyConstraint, and_, insert, not_, update
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, PrimaryKeyConstraint, and_, func, insert, not_, update
 from sqlalchemy import String, Table, create_engine, delete, select, exists
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.orm import DeclarativeBase, Session
 
-from src.database.models import Chain, Courier, MenuItem, Order, OrderItem, Restaurant, User
+from src.database.models import Chain, Courier, FoodReview, MenuItem, Order, OrderItem, Restaurant, User
 
 DB_URL = f"sqlite:///./local.db"
 
@@ -13,13 +13,22 @@ sessionFactory = sessionmaker(autoflush=False, bind=engine)
 
 s = sessionFactory()
 
-rows = s.execute(select(Order)\
-				.join(Courier)\
-				.join(User)\
-				.where(and_(User.email == "user_1@vega.com",
-						 Order.delivered_at == None)))
-	
-rows = s.execute(select(Courier))
+chain = '2x2'
+item = 'Bolgonese'
+user = "nemanja@vega.com"
 
-for d in rows.scalars().all():
-	print(f"{d.user.email} -> {d.restaurant.name}")
+stm = select(func.avg(FoodReview.rating))\
+			.join(MenuItem).join(Chain)\
+			.where(and_(Chain.name == chain, MenuItem.name == item))
+
+data = s.execute(stm)
+print(data.scalar())
+
+# row = s.execute(stm)
+# val = row.scalar()
+# print(val)
+
+# rows = s.execute(select(FoodReview))
+
+# for r in rows.scalars().all():
+# 	print(r.rating)

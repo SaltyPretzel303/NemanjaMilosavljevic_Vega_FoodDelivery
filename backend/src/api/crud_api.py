@@ -8,7 +8,7 @@ import src.database.db as crud
 from src.database.session import gen_session
 import src.model.mapper as mapper
 
-from src.model.models import AddCourierRequest, AddCourierResponse, AddRestaurantRequest, Chain, ChainRequest, CheckoutRequest, CheckoutResponse, Courier, MenuItem, MenuItemRequest, Restaurant, Role, Sort, UpdateRestRequest
+from src.model.models import AddCourierRequest, AddCourierResponse, AddRestaurantRequest, Chain, ChainRequest, CheckoutRequest, CheckoutResponse, Courier, FoodReview, MenuItem, MenuItemRequest, PostReviewRequest, Restaurant, Role, Sort, UpdateRestRequest
 from src.database.db_data import chains, foods
 
 from supertokens_python.recipe.session import SessionContainer
@@ -356,3 +356,60 @@ async def del_courier(restaurant: str,
 	await crud.remove_courier(db, courier)
 
 	return 
+
+@app.get("/rating")
+async def get_rating(chain:str, item: str, 
+					db = Depends(gen_session)):
+	data = await crud.get_rating(db, chain, item)
+	return data if data is not None else 0
+
+@app.get("/canreview")
+async def can_review(chain:str, item:str, 
+					s = Depends(verify_session()),
+					db = Depends(gen_session)):
+
+	if not await crud.have_ordered(db, chain, item, s.user_id):
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
+					detail="You have never ordered this item.")
+	
+	if await crud.get_review(db, chain, item, s.user_id) is not None: 
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
+					detail="You already posted review.")
+
+	return # Will return 200
+
+@app.post("/review")
+async def post_review(data: PostReviewRequest,
+					s = Depends(verify_session()),
+					db = Depends(gen_session)):
+	
+	ordered = await crud.have_ordered(db, data.chain, data.itemName, s.user_id)
+	review = await crud.get_review(db, data.chain, data.itemName, s.user_id)
+
+	if not ordered or review is not None:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
+					  detail="You either already poste review or never order this item.")
+	
+	review = await crud.add_review(db, data.chain, data.itemName, 
+								data.rating, data.comment, 
+								s.user_id)
+
+	if review is None: 
+		raise HTTPException(status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+					  detail="Failed to add review.")
+	
+	return mapper.as_food_review(review.comment, review.rating, review.user.email)
+
+@app.get("/reviews", response_model=List[FoodReview])
+async def get_reviews(chain:str, itemName:str, 
+					  from_ind:int=0, count: int=3, 
+					  db = Depends(gen_session)): 
+	
+	data = await crud.get_reviews(db, chain, itemName, from_ind, count)
+	return [mapper.as_food_review(review.comment, 
+							review.rating, 
+							review.user.email) for review in data]
+
+# canComment ? haveOrdered and !commented
+# postReview
+# loadReviews

@@ -2,9 +2,17 @@ import SuperTokens from 'supertokens-auth-react'
 import EmailPassword, { OnHandleEventContext } from 'supertokens-auth-react/recipe/emailpassword'
 import Session, { signOut } from 'supertokens-auth-react/recipe/session'
 import { useEffect, useState } from 'react'
-import { CardDetails, Chain, OrderItem, MenuItem, CheckoutResponse, User, Sort, AddItemResponse, Role, Restaurant, isSuccess, OrderFromChain } from './datas'
+import { CardDetails, Chain, OrderItem, MenuItem, CheckoutResponse, User, Sort, AddItemResponse, Role, Restaurant, isSuccess, OrderFromChain, FoodReview } from './datas'
 import LoginPopup from './LoginPopup'
-import { addCourier, addMenuItem, addRest, deleteCourier, deleteMenuItem, getCouriers, getRestaurant, getRestaurants, getRoles, getUserData, loadChains, loadMenuItem, loadMenuItems, loadWaitingOrders, performCheckout, removeRest, updateMenuItem, updateRest } from './backend'
+import {
+	addCourier, addMenuItem, addRest, deleteCourier, deleteMenuItem,
+	getCouriers, getRestaurant, getRestaurants, getRoles,
+	getUserData, loadChains, loadMenuItem, loadMenuItems,
+	loadWaitingOrders, performCheckout, removeRest, updateMenuItem,
+	updateRest, getRating, getReviews,
+	getCanReview,
+	postReview
+} from './backend'
 import MenuItemComponent from './MenuItemComponent'
 import CartItem from './CartItem'
 import CheckoutPopup from './CheckoutPopup'
@@ -172,8 +180,7 @@ export default function App() {
 	async function onChainClick(chain: Chain) {
 		setSelChain(chain)
 		const newItems = await loadMenuItems(chain.chainName,
-			0, CHAINS_LOAD_COUNT,
-			menuSort)
+			0, CHAINS_LOAD_COUNT, menuSort)
 
 		setMenuItems(newItems)
 
@@ -363,6 +370,33 @@ export default function App() {
 		return itemDeleted
 	}
 
+	async function loadFoodRating(item: MenuItem): Promise<number> {
+		if (!selChain) return -1 // will always be defined
+
+		return getRating(selChain.chainName, item.name)
+	}
+
+
+	async function loadReviews(item: MenuItem, f: number, c: number): Promise<FoodReview[]> {
+		if (!selChain) return []
+
+		return getReviews(selChain.chainName, item.name, f, c)
+	}
+
+	async function checkIfCanComment(item: MenuItem): Promise<boolean> {
+		if (!selChain) return false
+
+		return getCanReview(selChain.chainName, item.name)
+	}
+
+	async function onPostReview(item: MenuItem, rating: number,
+		comment: string): Promise<FoodReview | undefined> {
+
+		if (!selChain) return
+
+		return postReview(selChain.chainName, item.name, rating, comment)
+	}
+
 	function AdminButton({ text, onClick }: { text: string, onClick: () => void }) {
 		return (<button className="flex
 				px-2 mr-2
@@ -374,13 +408,16 @@ export default function App() {
 
 	return (
 		<div className="flex flex-col
-				bg-gray-700
-				h-screen w-screen
+				bg-slate-800
+				text-white
+				h-screen w-screen 
+				max-h-screen
 				items-center justify-start">
 
 			{/* HEADER BAR */}
 			<div className='flex flex-row 
 				h-[40px] w-full
+				py-2
 				bg-gray-800
 				items-center justify-center'>
 
@@ -398,61 +435,64 @@ export default function App() {
 			</div>
 
 			<div className='flex flex-row 
+					py-4
 					size-full
+					items-center justify-evenly
 					border-2 border-black'>
 
 				{/* CHAINS */}
 				<div className='flex flex-col 
-						mx-4
-						items-center justify-start
-						w-1/3 h-full'>
+						w-[450px] min-w-[450px] 
+						h-full
+						items-center justify-start'>
 
 					{/* admin panel */}
-					{adminPanelVisible && <div className='flex flex-col 
-							my-2 py-2 px-4
-							w-full 
+					{adminPanelVisible &&
+						<div className='flex flex-col 
+							mb-2 py-2 px-4
+							w-full h-[80px] min-h-[80px]
 							border rounded-xl'>
 
-						<p className='flex w-1/2 border-b'>Admin panel</p>
+							<p className='flex w-1/2 border-b'>Admin panel</p>
 
-						<div className='flex flex-row
+							<div className='flex flex-row
 							w-full mt-2
 							overflow-x-scroll'>
 
-							<AdminButton text={"Restaurants"}
-								onClick={() => { setAddRestVisible(true) }} />
-							<AdminButton text={"Couriers"}
-								onClick={() => { setAddCourierVisible(true) }} />
-							<AdminButton text={"Menu Item"}
-								onClick={() => { setAddMenuItemVisible(true) }} />
+								<AdminButton text={"Restaurants"}
+									onClick={() => { setAddRestVisible(true) }} />
+								<AdminButton text={"Couriers"}
+									onClick={() => { setAddCourierVisible(true) }} />
+								<AdminButton text={"Menu Item"}
+									onClick={() => { setAddMenuItemVisible(true) }} />
+							</div>
+
 						</div>
-
-					</div>}
-
-					<Column
-						title="Chains"
-						sorts={chainsSorts}
-						onSort={onChainsSort}
-						loadMore={loadMoreChains}
-						hasMore={hasMoreChains}>
-						{
-							chains.map((chain, index) =>
-								<div key={index}
-									className='flex flex-col w-full items-center mt-2'>
+					}
+					<div className='flex w-full h-full '>
+						<Column
+							title="Chains"
+							sorts={chainsSorts}
+							onSort={onChainsSort}
+							loadMore={loadMoreChains}
+							hasMore={hasMoreChains}>
+							{
+								chains.map((chain, index) =>
 									<ChainPreview
+										key={chain.chainName}
 										chain={chain}
-										onClick={onChainClick} />
-								</div>
-							)
-						}
-					</Column>
+										onClick={onChainClick}
+										selected={selChain?.chainName == chain.chainName} />
+								)
+							}
+						</Column>
+					</div>
 				</div>
 
 				{/* menu items */}
 				<div className='flex
-					items-center justify-center
-					h-full w-1/3
-					mx-4'>
+					w-[600px] min-w-[600px] h-full
+					items-center justify-center'>
 
 					<Column title="Menu"
 						sorts={menuSorts}
@@ -461,11 +501,15 @@ export default function App() {
 						hasMore={hasMoreItems}>
 						{
 							menuItems.map((item, index) =>
-								<div key={index}
+								<div key={item.name}
 									className='flex flex-col w-full items-center mt-2'>
 									<MenuItemComponent item={item}
 										discount={noDiscount}
-										onOrder={addToOrder} />
+										onOrder={addToOrder}
+										loadItemRating={loadFoodRating}
+										loadItemReviews={loadReviews}
+										checkCanComment={checkIfCanComment}
+										postReview={onPostReview} />
 								</div>
 							)
 						}
@@ -475,8 +519,8 @@ export default function App() {
 
 				{/* cart */}
 				<div className='flex flex-col
-					h-full w-1/3
-					mx-4 rounded-xl px-2
+					w-[450px] min-w-[450px] h-full
+					rounded-xl px-2
 					items-start'>
 
 					<div className='flex w-full h-[400px] mb-2'>

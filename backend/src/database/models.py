@@ -98,20 +98,15 @@ class Role(Base):
 	chain = relationship(Chain, uselist=False, lazy="immediate")
 
 	role_name = Column(String)
-
-class Comment(Base): 
-	__tablename__ = "comments"
+	
+class FoodReview(Base): 
+	__tablename__ = "food_reviews"
 
 	id = Column(Integer, primary_key=True, index=True)
-	
-	menu_item_id = Column(ForeignKey(MenuItem.id))
+
+	item_id = Column(ForeignKey(MenuItem.id))
 	user_id = Column(ForeignKey(User.id))
-	
-class Rating(Base): 
-	__tablename__ = "ratings"
+	user = relationship(User, uselist=False, lazy="immediate")
 
-	id = Column(Integer, primary_key=True, index=True)
-
-	menu_item_id = Column(ForeignKey(MenuItem.id))
-
-
+	rating = Column(Float)
+	comment = Column(String)
