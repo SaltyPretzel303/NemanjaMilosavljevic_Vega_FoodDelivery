@@ -24,7 +24,6 @@ import AdminRestPopup from './AdminRestPopup'
 import AdminCourierPopup from './AdminCourierPopup'
 import config from './Config'
 
-
 SuperTokens.init({
 	appInfo: {
 		appName: "react_app",
@@ -44,7 +43,6 @@ SuperTokens.init({
 			onHandleEvent: async (context: OnHandleEventContext) => {
 				if (context.action == "SUCCESS" && context.createdNewSession) {
 					console.log("Successfull login/up")
-
 				}
 			},
 

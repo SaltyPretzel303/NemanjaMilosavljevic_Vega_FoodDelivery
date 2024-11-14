@@ -50,7 +50,7 @@ services:
     build: 
       context: ./
       dockerfile: ./backend.Dockerfile
-    image: 'vega/order_backend'
+    image: 'vega/backend'
     environment: 
       APP_STAGE: prod
     ports: 
