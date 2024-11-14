@@ -10,16 +10,8 @@ This command will build all the necessary images, create `bridge` type network `
 - web.vega - Container hosting react web application. 
 - tokens-core.vega - Part of the Supertokens authentication solution, exposing HTTP REST API.
 - tokens-db.vega - Postgres database used by the tokens-core.vega service. 
-- backend.vega - Backend application exposing HTTP REST API for CRUD operations on chains, restaurants, couriers and menu items. Database used by the `backend.vega` service is sqlite in-file database. To keep the data after the container restart `local.db` file should be mounted as a volume using commented section inside `docker-compose.yaml` under the `backend` service configuration: 
-```
-	backend: 
-		... 
-		# Uncomment next lines in docker-compose.yaml to achieve data persistance after the container is restarted.
-		# Keep in mind that if this file does not exists, it will be created and mounted as the directory. 
-		# To create it run: $ touch ./backend/local.db (while inside the root of the project).
-		volumes: 
-			-  ./backend/local.db:/app/local.db
-```
+- backend.vega - Backend application exposing HTTP REST API for CRUD operations on chains, restaurants, couriers and menu items. Database used by the `backend.vega` service is sqlite in-file database. To keep the data after the container restart, `local.db` file should be mounted as a volume (note that this file is provided in the repository with some data already in it). If the file is not present before the service startup, directory will be created instead of the file (and mounted). To avoid this situation, before starting the service create the file with  `$ touch local.db` while inside the project's root.
+ 
 If default parameters are used, after the startup (running `docker compose up`)  web application can be accessed in the browser on the address `http://localhost:3000`. 
 
 HTTP REST API exposed by the backend service is described in `Order.Vega.postman_collection.json
@@ -32,6 +24,11 @@ On top of the screen Login button will be present (if the user is already logged
 Click on login button will open popup containing Supertokens signin/up form. In order to signUp, unique email address, password and address are required. To simplify the process, only the email is validated (by uniqueness but not existance).  
 
 Each user can have `admin` role at any of the chains which enables him to add/update restaurants or couriers. This role is assigned using add_role route while providing `rootKey` to achieve required privileges. To simplify process every value provided is considered as valid `rootKey`.
+
+Next accounts are already created and can be used: 
+- user_1@vega.com - pwd: user_1vega1 -> have admin privileges in chains: 2x2, Bata Bane, Night and Day. 
+- user_2@vega.com - pwd: user_2vega1
+- user_3@vega.com - pwd: user_3vega1
 
 #### Chains, restaurants, orders
 In the first column, three available chains will appear. More can be load by clicking on `Load more` button in the bottom of the screen. Only 3 are loaded by default to showcase the paging feature. 
@@ -48,4 +45,3 @@ If the user have ordered some of the menu items (but also never before have left
 If reviews are available, the first one will be shown while the rest can be loaded by clicking on More review button (loading three more each time).
 #### Checkout
 By ordering menu item, it will get listed in the far bottom right column. Multiple items of the same kind can be added and each will get listed separately. While ordering user can switch restaurant chain and create order with items from multiple different chains. In the `total` column (above the ordered items) checkout will be available for each restaurant chain. By clicking checkout popup will open allowing user to enter credit card details (in form of the single string also always validated to simplify the process) and post the order. If any of the couriers is available order will be accepted and checkout item will be replaced with order info and `waiting` status (disappearing if page is refreshed after 15 min).
-
