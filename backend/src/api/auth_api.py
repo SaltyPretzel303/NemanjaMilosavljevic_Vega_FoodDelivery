@@ -98,6 +98,7 @@ init(
 		# Domain name of the service exposing auth api.
 		# https://supertokens.com/docs/emailpassword/common-customizations/sessions/multiple-api-endpoints
 		api_domain=f"http://localhost:8080",
+		# api_domain=f"http://backend.vega",
 		api_base_path="/auth",
 		website_domain=f"http://localhost:3000",
 		website_base_path="/"

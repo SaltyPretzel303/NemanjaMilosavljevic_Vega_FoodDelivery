@@ -52,6 +52,11 @@ export default function CheckoutPopup(
 		setCheckoutResp(resp)
 	}
 
+	function formatTime(sTime: string): string {
+
+		return new Date(sTime).toLocaleString()
+	}
+
 	function ResponseRender({ response }: { response: CheckoutResponse | undefined }) {
 		if (!response) {
 			return <div></div>
@@ -60,11 +65,13 @@ export default function CheckoutPopup(
 			case CheckoutResponseType.SUCCESS:
 				return (
 					<div className='flex flex-col border-2
-						 border-green-600 mt-4'>
+						p-2 
+						border-green-600 mt-4
+						rounded-xl'>
 
-						<div>Your oreder is processed by the: {response.restaurant}</div>
-						<div>Your courier is: {response.courier}</div>
-						<div>Expect delivery at: {response.deliveryTime} </div>
+						<div>Order processed by: {response.restaurant}</div>
+						<div>Courier: {response.courier}</div>
+						<div>Delivery expected at: {formatTime(response.deliveryTime)} </div>
 
 					</div>)
 			case CheckoutResponseType.INVALID_CARD:

@@ -1,3 +1,4 @@
+import { formatDiagnostic } from "typescript";
 import { OrderItem, CheckoutResponse } from "./datas";
 
 export default function Cart(
@@ -14,6 +15,10 @@ export default function Cart(
 
 	function cartValue() {
 		return newOrders.reduce((s, item) => s + item.total, 0)
+	}
+
+	function formatTime(sTime: string): string {
+		return new Date(sTime).toLocaleString()
 	}
 
 	return (
@@ -39,9 +44,12 @@ export default function Cart(
 							border border-green-500 rounded-xl'
 							key={ind}>
 
-							<p className='flex w-3/4'>
-								{ord.orderId}: {ord.restaurant} |{ord.deliveryTime}|
-							</p>
+							<div className='flex flex-col w-3/4'>
+								<p>
+									{ord.orderId}: {ord.restaurant}
+								</p>
+								<p>Expected at: {formatTime(ord.deliveryTime)}</p>
+							</div>
 							<p>Waiting ... </p>
 						</div>
 					)

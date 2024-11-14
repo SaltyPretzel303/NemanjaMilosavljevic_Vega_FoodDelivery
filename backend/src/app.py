@@ -18,17 +18,13 @@ import uvicorn
 
 from src.api.crud_api import app as crud_router
 from src.api.auth_api import app as auth_router
-# from src.api.mid_crud_api import app as crud_router
 from src.config import AppConfig
 
 config = AppConfig.instance()
 
 async def app_lifespan(app: FastAPI): 
 	print("starting fastapi app")
-	# async with db(): 
-	# 	await db.session.run_sync(Base.metadata.create_all)
-	# 	print("Model initialize.")
-	
+
 	await create_engine()
 
 	print("Engine initialize")
@@ -43,16 +39,13 @@ app.add_middleware(get_fast_api_middleware())
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=[f"http://localhost:3000"],
+	# allow_origins=[f"http://web.vega:3000"],
+	# allow_origins=["*"],
 	allow_credentials=True,
 	allow_methods=["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["Content-Type", "cookies"] + get_all_cors_headers(),
 )
 
-# app.add_middleware(SQLAlchemyMiddleware, 
-# 			db_url='sqlite+aiosqlite:///local.db', 
-# 			engine_args={ 
-				
-# 				})
 
 app.include_router(crud_router)
 app.include_router(auth_router)

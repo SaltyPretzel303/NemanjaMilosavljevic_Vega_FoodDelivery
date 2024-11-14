@@ -13,93 +13,97 @@ import {
 	PostReviewRequest
 } from "./datas";
 
+import config from './Config'
+
+const DOMAIN = config.backendDomain
+
 function chainsUrl(f: number, cnt: number, sort: Sort): string {
-	return `http://localhost:8080/chains?from_ind=${f}&count=${cnt}&sort=${sort}`
+	return `http://${DOMAIN}/chains?from_ind=${f}&count=${cnt}&sort=${sort}`
 }
 
 function menuItemsUrl(chain: string, f: number, cnt: number, sort: Sort): string {
-	return `http://localhost:8080/menu?chain=${chain}&from_ind=${f}&count=${cnt}&sort=${sort}`
+	return `http://${DOMAIN}/menu?chain=${chain}&from_ind=${f}&count=${cnt}&sort=${sort}`
 }
 
 function menuItemUrl(chain: string, item: string): string {
-	return `http://localhost:8080/item?chain=${chain}&item=${item}`
+	return `http://${DOMAIN}/item?chain=${chain}&item=${item}`
 }
 
 function updateMenuItemUrl(): string {
-	return `http://localhost:8080/menu`
+	return `http://${DOMAIN}/menu`
 }
 
 function deleteMenuItemUrl(chain: string, item: string): string {
-	return `http://localhost:8080/menu?chain=${chain}&item=${item}`
+	return `http://${DOMAIN}/menu?chain=${chain}&item=${item}`
 }
 
 function userDataUrl(tokensId: string): string {
-	return `http://localhost:8080/user?tokens_id=${tokensId}`
+	return `http://${DOMAIN}/user?tokens_id=${tokensId}`
 }
 
 function checkoutUrl(): string {
-	return `http://localhost:8080/checkout`
+	return `http://${DOMAIN}/checkout`
 }
 
 function addItemUrl(): string {
-	return `http://localhost:8080/menu`
+	return `http://${DOMAIN}/menu`
 }
 
 function getRolesUrl(email: string): string {
-	return `http://localhost:8080/roles?user_email=${email}`
+	return `http://${DOMAIN}/roles?user_email=${email}`
 }
 
 function getAddRestUrl(): string {
-	return `http://localhost:8080/restaurant`
+	return `http://${DOMAIN}/restaurant`
 }
 
 function addCourierUrl(): string {
-	return `http://localhost:8080/courier`
+	return `http://${DOMAIN}/courier`
 }
 
 function getCouriersUrl(rest: string): string {
-	return `http://localhost:8080/couriers?restaurant=${rest}`
+	return `http://${DOMAIN}/couriers?restaurant=${rest}`
 }
 
 function deleteCourierUrl(rest: string, courier: string): string {
-	return `http://localhost:8080/courier?restaurant=${rest}&courier=${courier}`
+	return `http://${DOMAIN}/courier?restaurant=${rest}&courier=${courier}`
 }
 
 function getRestaurantsUrl(chain: string): string {
-	return `http://localhost:8080/restaurants?chain=${chain}`
+	return `http://${DOMAIN}/restaurants?chain=${chain}`
 }
 
 function getOldOrders(): string {
-	return "http://localhost:8080/orders/waiting"
+	return `http://${DOMAIN}/orders/waiting`
 }
 
 function getRestaurantUrl(rest: string): string {
 	// restaurant name is unique
-	return `http://localhost:8080/restaurant/${rest}`
+	return `http://${DOMAIN}/restaurant/${rest}`
 }
 
 function getUpdateRestUrl(): string {
-	return `http://localhost:8080/restaurant`
+	return `http://${DOMAIN}/restaurant`
 }
 
 function getRemoveResturl(): string {
-	return `http://localhost:8080/restaurant`
+	return `http://${DOMAIN}/restaurant`
 }
 
 function getRatingUrl(chain: string, item: string): string {
-	return `http://localhost:8080/rating?chain=${chain}&item=${item}`
+	return `http://${DOMAIN}/rating?chain=${chain}&item=${item}`
 }
 
 function getReviewsUrl(chain: string, item: string, f: number, c: number): string {
-	return `http://localhost:8080/reviews?chain=${chain}&itemName=${item}&from_ind=${f}&count=${c}`
+	return `http://${DOMAIN}/reviews?chain=${chain}&itemName=${item}&from_ind=${f}&count=${c}`
 }
 
 function getCanCommentUrl(chain: string, item: string): string {
-	return `http://localhost:8080/canreview?chain=${chain}&item=${item}`
+	return `http://${DOMAIN}/canreview?chain=${chain}&item=${item}`
 }
 
 function getPostReviewUrl(): string {
-	return `http://localhost:8080/review`
+	return `http://${DOMAIN}/review`
 }
 
 /// APIS
@@ -382,7 +386,7 @@ export async function addCourier(chainName: string,
 				body: JSON.stringify(reqData)
 			})
 
-		if(!res.ok){
+		if (!res.ok) {
 			throw Error("Add courier status: " + res.ok)
 		}
 

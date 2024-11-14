@@ -22,13 +22,15 @@ import Cart from './Cart'
 import AdminMenuItemPopup from './AdminMenuItemPopup'
 import AdminRestPopup from './AdminRestPopup'
 import AdminCourierPopup from './AdminCourierPopup'
+import config from './Config'
+
 
 SuperTokens.init({
 	appInfo: {
 		appName: "react_app",
-		apiDomain: `http://localhost:8080/`,
+		apiDomain: `http://${config.backendDomain}/`,
 		apiBasePath: "/auth",
-		websiteDomain: `http://localhost:3000`,
+		websiteDomain: `http://${config.myDomain}`,
 		websiteBasePath: "/"
 	},
 	disableAuthRoute: true,
@@ -42,7 +44,7 @@ SuperTokens.init({
 			onHandleEvent: async (context: OnHandleEventContext) => {
 				if (context.action == "SUCCESS" && context.createdNewSession) {
 					console.log("Successfull login/up")
-					
+
 				}
 			},
 
@@ -438,13 +440,13 @@ export default function App() {
 			<div className='flex flex-row 
 					size-full
 					py-4
-					items-center justify-evenly
+					items-top justify-evenly
 					border-2 border-black'>
 
 				{/* CHAINS */}
 				<div className='flex flex-col 
 						w-[450px] min-w-[450px] 
-						h-full
+						h-full 
 						items-center justify-start'>
 
 					{/* admin panel */}
@@ -457,8 +459,8 @@ export default function App() {
 							<p className='flex w-1/2 border-b'>Admin panel</p>
 
 							<div className='flex flex-row
-							w-full mt-2
-							overflow-x-scroll'>
+								w-full mt-2
+								overflow-x-scroll'>
 
 								<AdminButton text={"Restaurants"}
 									onClick={() => { setAddRestVisible(true) }} />
@@ -470,7 +472,7 @@ export default function App() {
 
 						</div>
 					}
-					<div className='flex w-full h-full '>
+					<div className='flex w-full h-full'>
 						<Column
 							title="Chains"
 							sorts={chainsSorts}
@@ -492,7 +494,8 @@ export default function App() {
 
 				{/* menu items */}
 				<div className='flex
-					w-[600px] min-w-[600px] h-full
+					w-[600px] min-w-[600px] 
+					
 					items-center justify-center'>
 
 					<Column title="Menu"

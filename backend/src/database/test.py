@@ -13,22 +13,7 @@ sessionFactory = sessionmaker(autoflush=False, bind=engine)
 
 s = sessionFactory()
 
-chain = '2x2'
-item = 'Bolgonese'
-user = "nemanja@vega.com"
+s.execute(delete(Order))
+s.execute(delete(OrderItem))
 
-stm = select(func.avg(FoodReview.rating))\
-			.join(MenuItem).join(Chain)\
-			.where(and_(Chain.name == chain, MenuItem.name == item))
-
-data = s.execute(stm)
-print(data.scalar())
-
-# row = s.execute(stm)
-# val = row.scalar()
-# print(val)
-
-# rows = s.execute(select(FoodReview))
-
-# for r in rows.scalars().all():
-# 	print(r.rating)
+s.commit()

@@ -134,7 +134,7 @@ async def get_free_courier(s: AsyncSession, chain: str, long: float, lat: float)
 		.join(Restaurant)\
 		.join(Chain)\
 		.where(and_(Chain.name == chain, doing_delivery_stm))
-
+	
 	rows = await s.execute(stm)
 	data = rows.scalars().all()
 

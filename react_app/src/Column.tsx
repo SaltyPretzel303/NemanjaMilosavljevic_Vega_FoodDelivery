@@ -32,7 +32,6 @@ export function Column(
 		<div className='flex flex-col 
 				w-full h-full
 				p-2
-				overflow-clip
 				items-center justify-start
 				border-2 border-orange-400 rounded-xl'>
 
@@ -69,7 +68,7 @@ export function Column(
 			}
 
 			<div className='flex flex-col 
-				w-full h-full
+				w-full h-full max-h-[660px]
 				items-center justify-end
 				overflow-clip
 				m-2 p-2'>

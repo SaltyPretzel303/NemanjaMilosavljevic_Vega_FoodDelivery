@@ -60,5 +60,16 @@ services:
     volumes: 
       - ./backend/local.db:/app/local.db
 
+  frontend: 
+    container_name: web.vega 
+    build: 
+      context: ./
+      dockerfile: ./frontend.Dockerfile
+    image: 'vega/web'
+    ports: 
+      - 0.0.0.0:3000:3000
+    networks: 
+      - vega-net
+
 
 
