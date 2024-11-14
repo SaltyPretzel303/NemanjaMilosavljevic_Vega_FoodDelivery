@@ -106,8 +106,6 @@ export default function App() {
 	useEffect(() => {
 		if (user == undefined) {
 			loadUser()
-
-			return
 		}
 
 		if (chains.length == 0) {

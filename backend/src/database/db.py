@@ -106,10 +106,14 @@ async def delete_restaurant(s: AsyncSession, name: str) -> bool:
 	return True
 
 async def has_active_orders(s: AsyncSession, rest: str) -> bool: 
+
+	now = datetime.now(UTC)
+	max_period = now - timedelta(minutes=15)
+
 	stm = select(Order)\
 			.join(Restaurant)\
 			.where(and_(Restaurant.name == rest, 
-						Order.delivered_at == None))
+						Order.delivered_at > max_period))
 	
 	rows = await s.execute(stm)
 	
@@ -433,10 +437,13 @@ async def get_couriers(s: AsyncSession, rest: str) -> List[Courier]:
 
 async def doing_delivery(s: AsyncSession, courier: str) -> bool:
 
+	now = datetime.now(UTC)
+	max_period = now - timedelta(minutes=15)
+
 	rows = await s.execute(select(Order)\
 				.join(Courier)\
 				.join(User)\
-				.where(and_(User.email == courier, Order.delivered_at == None)))
+				.where(and_(User.email == courier, Order.delivered_at > max_period)))
 	
 	data = rows.scalars().all()
 
